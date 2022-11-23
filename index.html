@@ -91,14 +91,144 @@
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      try{
+        let output = document.querySelector('output');
+        let firstNum = document.querySelector('#first-num').value;
+        let secondNum = document.querySelector('#second-num').value;
+        let operator = document.querySelector('#operator').value;
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      }catch(err){
+        console.error(err);
+      }finally{
+        console.log('program execution completed');
+      }
+     
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+
+    const logBtn =  errorBtns[0];
+    logBtn.addEventListener('click', e => {
+      e.preventDefault();
+      let firstNum = document.querySelector('#first-num').value;
+      let secondNum = document.querySelector('#second-num').value;
+      let operator = document.querySelector('#operator').value;
+      if(firstNum === null || firstNum === '' || secondNum === null || secondNum === '' || operator === null || operator === ''){
+        console.log('No input');
+      }else{
+        console.log(eval(`${firstNum} ${operator} ${secondNum}`));
+      }
+    });
+
+    const errBtn =  errorBtns[1];
+    errBtn.addEventListener('click', e => {
+      e.preventDefault();
+      let firstNum = document.querySelector('#first-num').value;
+      let secondNum = document.querySelector('#second-num').value;
+      let operator = document.querySelector('#operator').value;
+      if(firstNum === null || firstNum === '' || secondNum === null || secondNum === '' || operator === null || operator === ''){
+        console.error('Form is not filled');
+      }else{
+        console.error('Form is filled');
+      }
+    });
+
+    const countBtn = errorBtns[2];
+    countBtn.addEventListener('click', e => {
+      e.preventDefault();
+      console.count();
+    });
+
+    const warnBtn = errorBtns[3];
+    warnBtn.addEventListener('click', e => {
+      e.preventDefault();
+      console.warn('warn');
+    });
+
+    const assertBtn = errorBtns[4];
+    assertBtn.addEventListener('click', e => {
+      e.preventDefault();
+      let firstNum = document.querySelector('#first-num').value;
+      let secondNum = document.querySelector('#second-num').value;
+      let operator = document.querySelector('#operator').value;
+      if(firstNum === null || firstNum === '' || secondNum === null || secondNum === '' || operator === null || operator === ''){
+        console.assert('','user did not fill out form');
+      }else{
+        console.assert('','user filled out form');
+      }
+    });
+
+    const clearBtn = errorBtns[5];
+    clearBtn.addEventListener('click', e => {
+      e.preventDefault();
+      console.clear();
+    });
+
+    const dirBtn = errorBtns[6];
+    dirBtn.addEventListener('click', e => {
+      e.preventDefault();
+      console.dir(document.head);
+    });
+
+    const dirXmlBtn = errorBtns[7];
+    dirXmlBtn.addEventListener('click', e => {
+      e.preventDefault();
+      console.dirxml(document);
+    });
+
+    
+    const groupStartBtn =  errorBtns[8];
+    groupStartBtn.addEventListener('click', e => {
+      e.preventDefault();
+      console.group();
+    });
+
+    const groupEndBtn =  errorBtns[9];
+    groupEndBtn.addEventListener('click', e => {
+      e.preventDefault();
+      console.groupEnd();
+    });
+
+    const tableBtn =  errorBtns[10];
+    let res = [];
+    tableBtn.addEventListener('click', e => {
+      e.preventDefault();
+      let firstNum = document.querySelector('#first-num').value;
+      let secondNum = document.querySelector('#second-num').value;
+      let operator = document.querySelector('#operator').value;
+      if(firstNum === null || firstNum === '' || secondNum === null || secondNum === '' || operator === null || operator === ''){
+        let res = [{first: "empty", oper: "empty", second: "empty",result:"empy"}];
+        console.table(res);
+      }else{
+        res.push({first: firstNum, oper: operator, second: secondNum, result: eval(`${firstNum} ${operator} ${secondNum}`)});
+        console.table(res);
+      }
+    });
+
+    const startTimerBtn =  errorBtns[11];
+    startTimerBtn.addEventListener('click', e => {
+      e.preventDefault();
+      console.time();
+    });
+
+    const endTimerBtn =  errorBtns[12];
+    endTimerBtn.addEventListener('click', e => {
+      e.preventDefault();
+      console.timeEnd();
+    });
+  
+    const traceBtn = errorBtns[13];
+    traceBtn.addEventListener('click', e => {
+      e.preventDefault();
+      console.trace();
+    });
+
+    //what do i do about error?
+    const globalErrBtn = errorBtns[14];
+    globalErrBtn.addEventListener('click', e => {
+      e.preventDefault();
+      console.error('underfined behavior');
+    });
 
     // Start your code here
     // You may move this JS to another file if you wish
