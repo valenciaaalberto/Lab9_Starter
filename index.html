@@ -86,25 +86,52 @@
       <button>Trigger a Global Error</button>
     </section>
   </main>
-
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+<script>
+  window.TrackJS && TrackJS.install({ 
+    token: "62fc134c7b6643d6975335097c813a3f"
+  });
+</script>
+                        
   <script>
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
+      let errorCaught = false;
       e.preventDefault();
+      /*
+      Step 3 mostly, but some of 4
+      */
       try{
-        let output = document.querySelector('output');
-        let firstNum = document.querySelector('#first-num').value;
-        let secondNum = document.querySelector('#second-num').value;
-        let operator = document.querySelector('#operator').value;
-        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+        readUserInput();
       }catch(err){
-        console.error(err);
+        errorCaught = true;
+        if(err instanceof InvalidInput){
+          //with input that isn't numbers
+          //catchErrTransmitMess(err.message,err);
+          throw new InvalidInput("Error: " + err.message);
+        }else if(err instanceof IncompleteFormError){
+          //empty form
+          //catchErrTransmitMess(err.message,err);
+          throw new IncompleteFormError("Error: " + err.message);
+        }else{
+          //anything else uncaught
+          //catchErrTransmitMess(err.message,err);
+          console.error("Uh oh, the following error was displayed: " + err);
+        }
       }finally{
-        console.log('program execution completed');
-      }
-     
-    });
-
+          if(errorCaught){
+            //error caught user is redirected to re-submit form
+            console.log("please re-enter information");
+          }else{
+            //no error
+            console.log("Execution complete");
+          }
+        }
+      });
+    
+      /*
+      Button functionalities
+      */
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     const logBtn =  errorBtns[0];
@@ -113,8 +140,8 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      if(firstNum === null || firstNum === '' || secondNum === null || secondNum === '' || operator === null || operator === ''){
-        console.log('No input');
+      if(completeForm(firstNum, secondNum, operator)){
+        console.log("Form filled out incorrectly");
       }else{
         console.log(eval(`${firstNum} ${operator} ${secondNum}`));
       }
@@ -126,7 +153,7 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      if(firstNum === null || firstNum === '' || secondNum === null || secondNum === '' || operator === null || operator === ''){
+      if(completeForm(firstNum, secondNum, operator)){
         console.error('Form is not filled');
       }else{
         console.error('Form is filled');
@@ -151,7 +178,7 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      if(firstNum === null || firstNum === '' || secondNum === null || secondNum === '' || operator === null || operator === ''){
+      if(completeForm(firstNum, secondNum, operator)){
         console.assert('','user did not fill out form');
       }else{
         console.assert('','user filled out form');
@@ -196,7 +223,7 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      if(firstNum === null || firstNum === '' || secondNum === null || secondNum === '' || operator === null || operator === ''){
+      if(completeForm(firstNum, secondNum, operator)){
         let res = [{first: "empty", oper: "empty", second: "empty",result:"empy"}];
         console.table(res);
       }else{
@@ -223,15 +250,86 @@
       console.trace();
     });
 
-    //what do i do about error?
     const globalErrBtn = errorBtns[14];
     globalErrBtn.addEventListener('click', e => {
       e.preventDefault();
-      console.error('underfined behavior');
+      let firstNum = document.querySelector('#first-num').value;
+      let secondNum = document.querySelector('#second-num').value;
+      let operator = document.querySelector('#operator').value;
+      if(isNaN(firstNum) || isNaN(secondNum)){
+        console.error('undefined behavior');
+      }else{
+        console.error("error, but input is fine");
+      }
     });
 
     // Start your code here
     // You may move this JS to another file if you wish
+    function completeForm(firstNum, secondNum, operator){
+      return firstNum === null || firstNum === '' || secondNum === null || secondNum === ''
+       || operator === null || operator === '' || isNaN(firstNum) || isNaN(secondNum);
+    }
+
+     /*
+    Step 4 corressponds to lines below here:
+    */
+    class Error {
+      constructor(message) {
+        this.message = message;
+        this.name = "Error";
+      }
+    }
+
+    class IncompleteFormError extends Error {
+      constructor(message) {
+        super(message); 
+        this.name = "IncompleteFormError";
+      }
+    }
+
+    class InvalidInput extends Error {
+      constructor(message) {
+        super(message); 
+        this.name = "InvalidInput";
+      }
+    }
+    function readUserInput(){
+      let output = document.querySelector('output');
+      let firstNum = document.querySelector('#first-num').value;
+      let secondNum = document.querySelector('#second-num').value;
+      let operator = document.querySelector('#operator').value;
+      if (isNaN(firstNum)) {
+        throw new InvalidInput("first number entered is not a number"); 
+      }
+
+      if (isNaN(secondNum)) {
+        throw new InvalidInput("second number entered is not a number"); 
+      }
+
+      if(firstNum === '' && secondNum === ''){
+        throw new IncompleteFormError('Incomplete data: both entries are empty');
+      }
+     
+      if(firstNum === ''){
+        throw new IncompleteFormError('Incomplete data: first number entry is empty');
+      }
+
+      if(secondNum === ''){
+        throw new IncompleteFormError('Incomplete data: second number entry is empty');
+      }
+      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+    }
+    /*
+    Step 5 below this line. Simple way of catching/logging errors displayed
+    to console
+    */
+   /*
+    function catchErrTransmitMess(msg, error) {    
+        window.onerror = function (msg, lineNo, error) {
+          console.log("Error type: " + error + " with message " + msg);
+        } 
+    } 
+    */
   </script>
 </body>
 
