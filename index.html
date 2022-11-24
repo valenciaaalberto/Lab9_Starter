@@ -107,15 +107,15 @@
         errorCaught = true;
         if(err instanceof InvalidInput){
           //with input that isn't numbers
-          //catchErrTransmitMess(err.message,err);
+          catchErrTransmitMess(err.message,err);
           throw new InvalidInput("Error: " + err.message);
         }else if(err instanceof IncompleteFormError){
           //empty form
-          //catchErrTransmitMess(err.message,err);
+          catchErrTransmitMess(err.message,err);
           throw new IncompleteFormError("Error: " + err.message);
         }else{
           //anything else uncaught
-          //catchErrTransmitMess(err.message,err);
+          catchErrTransmitMess(err.message,err);
           console.error("Uh oh, the following error was displayed: " + err);
         }
       }finally{
@@ -323,13 +323,13 @@
     Step 5 below this line. Simple way of catching/logging errors displayed
     to console
     */
-   /*
+   
     function catchErrTransmitMess(msg, error) {    
         window.onerror = function (msg, lineNo, error) {
           console.log("Error type: " + error + " with message " + msg);
         } 
     } 
-    */
+    
   </script>
 </body>
 
